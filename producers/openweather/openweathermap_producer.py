@@ -22,9 +22,7 @@ access_token = api_credential['access_token']
 ApiInfo = namedtuple('ApiInfo', ['name', 'access_token'])
 apiInfo = ApiInfo('openweathermap', access_token)
 
-sc = connect(apiInfo.name,
-             _auth={'access_token': apiInfo.access_token},
-             _concurrency=3)
+sc = connect(apiInfo.name, _auth={'access_token': apiInfo.access_token}, _concurrency=3)
 
 
 async def get_weather(city):
@@ -55,6 +53,7 @@ def run():
             "%Y-%m-%d %H:%M:%S", now)
         current_weather = current_weather.to_json(orient="records")
         print(current_weather)
+        time.sleep(1)
 
         # export to Kafka
         # adding prints for debugging in logs
