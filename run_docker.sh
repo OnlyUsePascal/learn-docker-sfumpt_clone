@@ -6,4 +6,6 @@ opts=$2
 docker compose \
   -f $docker_path/docker-compose.yml \
   --env-file .env \
-  up --build --detach $opts
+  up --build \
+  --detach \
+  $opts
