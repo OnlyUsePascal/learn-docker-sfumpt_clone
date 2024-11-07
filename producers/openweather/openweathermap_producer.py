@@ -11,6 +11,7 @@ from kafka import KafkaProducer
 KAFKA_BROKER_URL = os.environ.get("KAFKA_BROKER_URL")
 TOPIC_NAME = os.environ.get("TOPIC_NAME")
 SLEEP_TIME = int(os.environ.get("SLEEP_TIME", 60))
+print(f'> {KAFKA_BROKER_URL} | {TOPIC_NAME} | {SLEEP_TIME}')
 
 # config api key
 config = configparser.ConfigParser()
@@ -36,12 +37,12 @@ def run():
     iterator = 0
     repeat_request = SLEEP_TIME / len(locations)
 
-    # print("Setting up Weather producer at {}".format(KAFKA_BROKER_URL))
-    # producer = KafkaProducer(
-    #     bootstrap_servers=KAFKA_BROKER_URL,
-    #     # Encode all values as JSON
-    #     value_serializer=lambda x: x.encode('ascii'),
-    # )
+    print("> Setting up Weather producer at {}".format(KAFKA_BROKER_URL))
+    producer = KafkaProducer(
+        bootstrap_servers=KAFKA_BROKER_URL,
+        # Encode all values as JSON
+        value_serializer=lambda x: x.encode('ascii'),
+    )
 
     while True:
         # retrieve weather info
@@ -52,18 +53,19 @@ def run():
         current_weather['report_time'] = time.strftime(
             "%Y-%m-%d %H:%M:%S", now)
         current_weather = current_weather.to_json(orient="records")
-        print(current_weather)
-        time.sleep(1)
+        print(f'> {current_weather}')
 
         # export to Kafka
         # adding prints for debugging in logs
-        # sendit = current_weather[1:-1]
-        # print("Sending new weather report iteration - {}".format(iterator))
-        # producer.send(TOPIC_NAME, value=sendit)
-        # print("New weather report sent")
+        print("> Sending new weather report iteration - {}".format(iterator))
+        sendit = current_weather[1:-1]
+        producer.send(TOPIC_NAME, value=sendit)
+        print("> New weather report sent")
         # time.sleep(repeat_request)
-        # print("Waking up!")
-        # iterator += 1
+        # print("> Waking up!")
+
+        time.sleep(10)
+        iterator += 1
 
 
 if __name__ == "__main__":
