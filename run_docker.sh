@@ -1,8 +1,9 @@
 #!/bin/bash
 
-echo "path: ${1}"
+docker_path=$1
+opts=$2
 
 docker compose \
-  -f $1/docker-compose.yml \
+  -f $docker_path/docker-compose.yml \
   --env-file .env \
-  up --build --detach
+  up --build --detach $opts
